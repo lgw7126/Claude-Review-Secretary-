@@ -8,6 +8,12 @@ const CATEGORY_STYLES = {
     bar: 'bg-green-500',
     headerBg: 'bg-green-50 border-green-100',
   },
+  개선요청: {
+    badge: 'bg-yellow-100 text-yellow-700 border border-yellow-200',
+    icon: '💡',
+    bar: 'bg-yellow-400',
+    headerBg: 'bg-yellow-50 border-yellow-100',
+  },
   부정: {
     badge: 'bg-orange-100 text-orange-700 border border-orange-200',
     icon: '😟',
@@ -24,7 +30,7 @@ const CATEGORY_STYLES = {
 
 // 답변 스타일별 아이콘
 const REPLY_ICONS = {
-  공식적: '🤝',
+  정중한: '🤝',
   친근한: '😊',
   간결한: '⚡',
 };
@@ -97,7 +103,7 @@ export default function ReviewResult({ result }) {
               <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold ${styles.badge}`}>
                 {styles.icon} {result.category}
               </span>
-              <span className="text-sm text-gray-500">신뢰도 {result.confidence}%</span>
+              <span className="text-sm text-gray-500">{result.category} 가능성 {result.confidence}%</span>
             </div>
           </div>
         </div>
