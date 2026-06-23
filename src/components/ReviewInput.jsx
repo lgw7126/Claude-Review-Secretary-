@@ -64,17 +64,17 @@ export default function ReviewInput({ onAnalyze, isLoading }) {
         {/* 입력 영역 */}
         {activeTab === TAB_URL ? (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">리뷰 URL</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">리뷰 텍스트</label>
             <input
               type="text"
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
-              placeholder="네이버 플레이스 / 구글맵 / 카카오맵 리뷰 URL 또는 텍스트를 붙여넣으세요"
+              placeholder="리뷰 앱에서 텍스트를 복사해서 여기에 붙여넣으세요"
               className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               disabled={isLoading}
             />
-            <p className="mt-2 text-xs text-gray-400">
-              💡 URL을 붙여넣거나, 리뷰 텍스트를 직접 이 칸에 입력해도 됩니다
+            <p className="mt-2 text-xs text-orange-400">
+              ⚠️ URL 주소만 넣으면 분석이 안 됩니다. 리뷰 앱에서 텍스트를 직접 복사해 붙여넣으세요
             </p>
           </div>
         ) : (
