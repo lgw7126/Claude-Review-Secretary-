@@ -8,7 +8,7 @@ import { useAuth } from './hooks/useAuth';
 import './App.css';
 
 export default function App() {
-  const { user, authLoading, signInWithKakao, signOut } = useAuth();
+  const { user, authLoading, signInWithKakao, signOut, hasSupabase } = useAuth();
   const [historyKey, setHistoryKey] = useState(0);
   const [activeTab, setActiveTab] = useState('analyze');
 
@@ -35,14 +35,14 @@ export default function App() {
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
               <span className="text-xs text-green-700 font-medium">Claude AI</span>
             </div>
-            {!authLoading && (
+            {hasSupabase && !authLoading && (
               <Auth user={user} onSignIn={signInWithKakao} onSignOut={signOut} />
             )}
           </div>
         </div>
 
-        {/* 탭 네비게이션 (로그인 시) */}
-        {user && (
+        {/* 탭 네비게이션 (Supabase + 로그인 시) */}
+        {hasSupabase && user && (
           <div className="max-w-2xl mx-auto px-4 pb-0 flex border-t border-gray-100">
             <button
               onClick={() => setActiveTab('analyze')}
@@ -72,7 +72,7 @@ export default function App() {
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-5">
 
         {/* 히스토리 탭 */}
-        {user && activeTab === 'history' && (
+        {hasSupabase && user && activeTab === 'history' && (
           <ReviewHistory user={user} refreshKey={historyKey} />
         )}
 
@@ -155,8 +155,8 @@ export default function App() {
               </div>
             )}
 
-            {/* 비로그인 사용자에게 로그인 안내 */}
-            {!user && !authLoading && !isLoading && (
+            {/* 비로그인 사용자에게 로그인 안내 (Supabase 설정된 경우만) */}
+            {hasSupabase && !user && !authLoading && !isLoading && (
               <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-5">
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">💾</span>

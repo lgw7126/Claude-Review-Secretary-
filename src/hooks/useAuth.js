@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, hasSupabase } from '../lib/supabase';
 
 export function useAuth() {
   const [user, setUser] = useState(null);
-  const [authLoading, setAuthLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(hasSupabase);
 
   useEffect(() => {
+    if (!hasSupabase) return;
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setAuthLoading(false);
@@ -19,6 +21,7 @@ export function useAuth() {
   }, []);
 
   async function signInWithKakao() {
+    if (!hasSupabase) return;
     await supabase.auth.signInWithOAuth({
       provider: 'kakao',
       options: { redirectTo: window.location.origin },
@@ -26,8 +29,9 @@ export function useAuth() {
   }
 
   async function signOut() {
+    if (!hasSupabase) return;
     await supabase.auth.signOut();
   }
 
-  return { user, authLoading, signInWithKakao, signOut };
+  return { user, authLoading, signInWithKakao, signOut, hasSupabase };
 }

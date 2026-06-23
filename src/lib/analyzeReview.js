@@ -1,103 +1,19 @@
-import Anthropic from '@anthropic-ai/sdk';
-
-const client = new Anthropic({
-  apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
-  // 브라우저에서 직접 호출하기 위한 설정 (프로덕션에서는 백엔드 프록시 권장)
-  dangerouslyAllowBrowser: true,
-});
-
-// 업종별 답변 톤 가이드
-const businessToneGuide = {
-  식당: '정중하고 따뜻한 음식점 사장 톤. 음식과 서비스에 대한 진심 어린 사과 또는 감사.',
-  카페: '친근하고 캐주얼한 카페 주인 톤. 분위기와 음료 품질에 집중.',
-  뷰티: '전문적이고 세심한 미용 전문가 톤. 기술적 설명과 고객 만족 강조.',
-  숙박: '격식 있고 서비스 지향적인 숙박업 톤. 편안함과 안전을 강조.',
-  기타: '정중하고 전문적인 사업자 톤. 고객 중심적 접근.',
-};
-
-// Claude에게 보낼 시스템 프롬프트
-const SYSTEM_PROMPT = `당신은 자영업자의 온라인 리뷰 관리를 도와주는 전문 AI 비서입니다.
-
-분류 기준 (4가지):
-- 긍정: ★4~5, 만족·칭찬·재방문 의사
-- 개선요청: ★3, 전반적 만족이나 특정 부분 아쉬움 표현
-- 부정: ★1~2, 명확한 불만·서비스 문제 제기
-- 악성: 허위사실·욕설·경쟁사 비방·협박·방문 확인 불가 패턴
-
-답변 전략 (카테고리별):
-- 긍정 → 진심 어린 감사 + 재방문 유도
-- 개선요청 → 경청 인정 + 구체적 개선 약속
-- 부정 → 진심 사과 + 개선 약속 + 직접 연락 유도
-- 악성 → 사실 기반 차분한 해명 + 신고 병행 권고
-
-출력은 반드시 아래 JSON만 응답하세요. 다른 텍스트 금지.
-
-{
-  "category": "긍정" | "개선요청" | "부정" | "악성",
-  "confidence": 0~100 숫자,
-  "reason": "판단 이유 2~3문장",
-  "replies": [
-    { "style": "정중한", "content": "150자 내외 답변" },
-    { "style": "친근한", "content": "150자 내외 답변" },
-    { "style": "간결한", "content": "80자 내외 답변" }
-  ],
-  "report_guide": {
-    "is_reportable": true | false,
-    "reason": "신고 가능 여부 근거",
-    "steps": ["단계1", "단계2", "단계3"],
-    "platforms": {
-      "naver": "네이버 신고 방법",
-      "google": "구글 신고 방법",
-      "kakao": "카카오 신고 방법"
-    }
-  }
-}`;
-
-/**
- * 리뷰 텍스트를 Claude API로 분석
- * @param {string} reviewText - 분석할 리뷰 텍스트
- * @param {string} businessType - 업종 (식당/카페/뷰티/숙박/기타)
- * @returns {Promise<Object>} 분석 결과 JSON
- */
 export async function analyzeReview(reviewText, businessType) {
   if (!reviewText || reviewText.trim().length < 5) {
     throw new Error('리뷰 내용을 입력해주세요 (최소 5자 이상)');
   }
 
-  const toneGuide = businessToneGuide[businessType] || businessToneGuide['기타'];
-
-  const userMessage = `업종: ${businessType}
-답변 톤 가이드: ${toneGuide}
-
-분석할 리뷰:
-"${reviewText.trim()}"
-
-위 리뷰를 분석하고 지정된 JSON 형식으로만 응답해주세요.`;
-
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 1500,
-    system: SYSTEM_PROMPT,
-    messages: [
-      {
-        role: 'user',
-        content: userMessage,
-      },
-    ],
+  const res = await fetch('/api/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ reviewText, businessType }),
   });
 
-  const rawText = response.content[0].text.trim();
+  const data = await res.json();
 
-  // JSON 파싱 (마크다운 코드블록 제거)
-  const jsonText = rawText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
-
-  let result;
-  result = JSON.parse(jsonText);
-
-  // 필수 필드 검증
-  if (!result.category || !result.replies || !Array.isArray(result.replies)) {
-    throw new Error('AI 응답 형식이 올바르지 않습니다. 다시 시도해주세요.');
+  if (!res.ok) {
+    throw new Error(data.error || '분석 중 오류가 발생했습니다.');
   }
 
-  return result;
+  return data;
 }
