@@ -3,12 +3,15 @@ import ReviewInput from './components/ReviewInput';
 import ReviewResult from './components/ReviewResult';
 import Auth from './components/Auth';
 import ReviewHistory from './components/ReviewHistory';
+import BusinessProfile from './components/BusinessProfile';
 import { useAnalyze } from './hooks/useAnalyze';
 import { useAuth } from './hooks/useAuth';
+import { useBusinessProfile } from './hooks/useBusinessProfile';
 import './App.css';
 
 export default function App() {
   const { user, authLoading, signInWithKakao, signOut, hasSupabase } = useAuth();
+  const { businessName, saveBusinessName } = useBusinessProfile();
   const [historyKey, setHistoryKey] = useState(0);
   const [activeTab, setActiveTab] = useState('analyze');
 
@@ -97,6 +100,9 @@ export default function App() {
               </div>
             )}
 
+            {/* 가게 설정 */}
+            <BusinessProfile businessName={businessName} onSave={saveBusinessName} />
+
             {/* 리뷰 입력 */}
             <ReviewInput onAnalyze={analyze} isLoading={isLoading} />
 
@@ -151,7 +157,7 @@ export default function App() {
                     ← 새 리뷰 분석
                   </button>
                 </div>
-                <ReviewResult result={result} />
+                <ReviewResult result={result} businessName={businessName} />
               </div>
             )}
 

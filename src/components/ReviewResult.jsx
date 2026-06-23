@@ -36,18 +36,18 @@ const REPLY_ICONS = {
 };
 
 // 클립보드 복사 버튼 컴포넌트
-function CopyButton({ text }) {
+function CopyButton({ text, businessName }) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
+    const fullText = businessName ? `${text}\n\n— ${businessName} 드림` : text;
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(fullText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // clipboard API 미지원 시 fallback
       const textarea = document.createElement('textarea');
-      textarea.value = text;
+      textarea.value = fullText;
       document.body.appendChild(textarea);
       textarea.select();
       document.execCommand('copy');
@@ -85,7 +85,7 @@ function CopyButton({ text }) {
   );
 }
 
-export default function ReviewResult({ result }) {
+export default function ReviewResult({ result, businessName }) {
   const [activeReply, setActiveReply] = useState(0);
 
   if (!result) return null;
@@ -155,8 +155,11 @@ export default function ReviewResult({ result }) {
           >
             <div className="relative bg-gray-50 rounded-xl p-4 border border-gray-100">
               <p className="text-sm text-gray-700 leading-relaxed pr-2">{reply.content}</p>
+              {businessName && (
+                <p className="text-sm text-blue-500 mt-2">— {businessName} 드림</p>
+              )}
               <div className="mt-3 flex justify-end">
-                <CopyButton text={reply.content} />
+                <CopyButton text={reply.content} businessName={businessName} />
               </div>
             </div>
           </div>
@@ -171,7 +174,7 @@ export default function ReviewResult({ result }) {
                   <span className="text-xs font-medium text-gray-500">
                     {REPLY_ICONS[reply.style]} {reply.style}
                   </span>
-                  <CopyButton text={reply.content} />
+                  <CopyButton text={reply.content} businessName={businessName} />
                 </div>
                 <p className="text-sm text-gray-600 leading-relaxed">{reply.content}</p>
               </div>
