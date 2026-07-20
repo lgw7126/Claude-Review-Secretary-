@@ -4,9 +4,15 @@
 
 ### 🚀 [앱 바로 실행하기 → claude-review-secretary-ipv7.vercel.app](https://claude-review-secretary-ipv7.vercel.app)
 
+
+<img width="458" height="647" alt="스크린샷 2026-07-20 230259" src="https://github.com/user-attachments/assets/5757ab24-cc94-4f44-9219-caf4bb1510bf" />
+
+
 ---
 
 ## 기획 의도
+<img width="455" height="668" alt="스크린샷 2026-07-20 232211" src="https://github.com/user-attachments/assets/f4a1fbef-0058-41f0-b891-be71a3817c1a" />
+<img width="429" height="401" alt="스크린샷 2026-07-20 232218" src="https://github.com/user-attachments/assets/a033706f-fcac-4442-963e-1594125d0469" />
 
 자영업자에게 온라인 리뷰 관리는 선택이 아닌 필수입니다. 하지만 리뷰 하나하나에 적절한 답변을 다는 일은 시간이 많이 걸리고, 특히 부정적인 리뷰나 악성 리뷰에는 어떻게 대응해야 할지 막막한 경우가 많습니다.
 
